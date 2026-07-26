@@ -7,4 +7,3 @@ namespace MichiMarket.Models
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
     }
 }
-sktop\Proyectos ASP .NET\MichiMarket

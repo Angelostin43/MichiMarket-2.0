@@ -1,0 +1,69 @@
+@model MichiMarket.Models.Producto
+@{
+    ViewData["Title"] = Model.nombre;
+    var estaLogueado = Context.Session.GetString("nombres") != null;
+}
+
+<section class="py-5">
+    <div class="container">
+        <a asp-controller="Producto" asp-action="Index" class="btn btn-limpiar mb-4">
+            <i class="fas fa-arrow-left me-1"></i> Volver a productos
+        </a>
+
+        <div class="row g-4">
+            <div class="col-md-5">
+                <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                    <div class="product-img-wrapper" style="background: #f8fafc; padding: 30px;">
+                        <img src="~/@Model.foto_producto" alt="@Model.nombre" style="width: 100%; height: 280px; object-fit: contain;" onerror="this.src='/img/gato_cara.png'" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="card border-0 shadow-sm h-100" style="border-radius: 12px;">
+                    <div class="card-body p-4">
+                        <div class="d-flex gap-2 mb-2">
+                            <span class="product-badge" style="position: static;">@char.ToUpper(Model.tipo[0])@Model.tipo.Substring(1)</span>
+                            <span class="badge bg-secondary" style="position: static; font-size: 11px; padding: 4px 10px; border-radius: 20px;">
+                                @char.ToUpper(Model.animal[0])@Model.animal.Substring(1)
+                            </span>
+                        </div>
+                        <h3 class="fw-bold mb-2">@Model.nombre</h3>
+                        <p class="text-muted mb-3">@Model.descripcion</p>
+
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span style="font-size: 1.8rem; font-weight: 700; color: var(--turquesa-dark);">S/ @Model.precio.ToString("F2")</span>
+                            <span class="text-muted small">Stock: @(Model.stock > 0 ? Model.stock + " unidades" : "Sin stock")</span>
+                        </div>
+
+                        @if (Model.stock > 0)
+                        {
+                            <div class="d-flex align-items-center gap-3">
+                                <label class="fw-bold small mb-0">Cantidad:</label>
+                                <input type="number" class="form-control" value="1" min="1" max="@Model.stock" id="qty-@Model.id_producto" style="width: 80px;" />
+                            </div>
+                            <div class="d-flex gap-2 mt-3">
+                                <button class="btn btn-submit flex-grow-1" onclick="agregarAlCarritoDetalle(@Model.id_producto)">
+                                    <i class="fas fa-cart-plus me-1"></i> Agregar al carrito
+                                </button>
+                                <button class="btn-cart-bookmark" style="position: static; width: 44px; height: 44px; font-size: 16px;" id="btn-@Model.id_producto"
+                                        data-nombre="@Model.nombre" data-precio="@Model.precio" data-tipo="@Model.tipo" data-animal="@Model.animal" data-foto="@Model.foto_producto">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary w-100" disabled>
+                                <i class="fas fa-ban me-1"></i> Sin stock
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>var estaLogueado = @(estaLogueado ? "true" : "false");</script>
+}

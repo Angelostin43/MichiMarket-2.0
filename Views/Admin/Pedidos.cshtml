@@ -1,0 +1,105 @@
+@model List<MichiMarket.Models.Pedido>
+@{
+    ViewData["Title"] = "Gestionar Pedidos";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0"><i class="fas fa-clipboard-list me-2"></i>Gestionar Pedidos</h4>
+            <span class="text-muted">@Model.Count registros</span>
+        </div>
+
+        @if (Model.Count == 0)
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No hay pedidos aun</h5>
+            </div>
+        }
+        else
+        {
+            <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th># Pedido</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th class="text-center">Cambiar estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in Model.OrderByDescending(x => x.fecha_creacion))
+                                {
+                                    var badgeClass = p.estado switch
+                                    {
+                                        "pendiente" => "badge-pendiente",
+                                        "en_camino" => "badge-camino",
+                                        "entregado" => "badge-entregado",
+                                        _ => "badge-pendiente"
+                                    };
+                                    var estadoTexto = p.estado switch
+                                    {
+                                        "pendiente" => "Pendiente",
+                                        "en_camino" => "En camino",
+                                        "entregado" => "Entregado",
+                                        _ => p.estado
+                                    };
+                                    <tr>
+                                        <td class="fw-bold">@p.id_pedido</td>
+                                        <td>@p.cliente</td>
+                                        <td>@p.fecha_creacion.ToString("dd/MM/yyyy")</td>
+                                        <td class="fw-bold" style="color: var(--turquesa-dark);">S/ @p.total.ToString("F2")</td>
+                                        <td><span class="badge @badgeClass">@estadoTexto</span></td>
+                                        <td class="text-center">
+                                            <div class="d-flex gap-1 justify-content-center">
+                                                @if (p.estado != "pendiente")
+                                                {
+                                                    <form method="post" asp-controller="Admin" asp-action="ActualizarEstadoPedido" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="idPedido" value="@p.id_pedido" />
+                                                        <input type="hidden" name="estado" value="pendiente" />
+                                                        <button type="submit" class="btn btn-sm btn-admin-status btn-pendiente" title="Pendiente">
+                                                            <i class="fas fa-clock"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                                @if (p.estado != "en_camino")
+                                                {
+                                                    <form method="post" asp-controller="Admin" asp-action="ActualizarEstadoPedido" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="idPedido" value="@p.id_pedido" />
+                                                        <input type="hidden" name="estado" value="en_camino" />
+                                                        <button type="submit" class="btn btn-sm btn-admin-status btn-camino" title="En camino">
+                                                            <i class="fas fa-truck"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                                @if (p.estado != "entregado")
+                                                {
+                                                    <form method="post" asp-controller="Admin" asp-action="ActualizarEstadoPedido" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="idPedido" value="@p.id_pedido" />
+                                                        <input type="hidden" name="estado" value="entregado" />
+                                                        <button type="submit" class="btn btn-sm btn-admin-status btn-entregado" title="Entregado">
+                                                            <i class="fas fa-check-circle"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

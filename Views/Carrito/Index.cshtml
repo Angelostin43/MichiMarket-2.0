@@ -1,0 +1,158 @@
+﻿@model List<MichiMarket.Models.CarritoDetalle>
+@{
+    ViewData["Title"] = "Carrito";
+    var estaLogueado = Context.Session.GetString("nombres") != null;
+    var total = Model.Sum(x => x.subtotal);
+}
+
+<section class="py-5">
+    <div class="container">
+        <h4 class="fw-bold mb-4"><i class="fas fa-shopping-cart me-2"></i>Mi Carrito</h4>
+
+        @if (estaLogueado)
+        {
+            if (Model.Count == 0)
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Tu carrito esta vacio</h5>
+                    <a asp-controller="Producto" asp-action="Index" class="btn btn-buscar mt-3">
+                        <i class="fas fa-box-open me-1"></i> Ver Productos
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        @foreach (var item in Model)
+                        {
+                            <div class="carrito-item mb-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="carrito-img-wrapper">
+                                        <img src="@Url.Content("~/" + item.foto_producto)" alt="@item.nombre" class="carrito-img" onerror="this.src='/img/gato_cara.png'" />
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="fw-bold mb-1">@item.nombre</h6>
+                                        <p class="text-muted small mb-1">
+                                            <span class="product-badge" style="font-size:10px;">@char.ToUpper(item.tipo[0])@item.tipo.Substring(1)</span>
+                                            &middot; @char.ToUpper(item.animal[0])@item.animal.Substring(1)
+                                        </p>
+                                        <p class="mb-0" style="color: var(--turquesa-dark); font-weight: 700;">S/ @item.precio_unit.ToString("F2") c/u</p>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <form method="post" asp-controller="Carrito" asp-action="ActualizarCantidad" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="idCarritoDetalle" value="@item.id_carrito_detalle" />
+                                            <input type="hidden" name="cantidad" value="@(item.cantidad - 1)" />
+                                            <button type="submit" class="btn btn-sm btn-cart-qty" @(item.cantidad <= 1 ? "disabled" : "")>
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        </form>
+                                        <span class="fw-bold" style="min-width:24px;text-align:center;">@item.cantidad</span>
+                                        <form method="post" asp-controller="Carrito" asp-action="ActualizarCantidad" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="idCarritoDetalle" value="@item.id_carrito_detalle" />
+                                            <input type="hidden" name="cantidad" value="@(item.cantidad + 1)" />
+                                            <button type="submit" class="btn btn-sm btn-cart-qty">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="text-end" style="min-width: 90px;">
+                                        <p class="fw-bold mb-2" style="color: var(--negro);">S/ @item.subtotal.ToString("F2")</p>
+                                        <form method="post" asp-controller="Carrito" asp-action="Eliminar">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="idCarritoDetalle" value="@item.id_carrito_detalle" />
+                                            <button type="submit" class="btn btn-sm btn-eliminar">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                            <div class="card-body p-4">
+                                <h6 class="fw-bold mb-3">Resumen del pedido</h6>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Productos</span>
+                                    <span>S/ @total.ToString("F2")</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Envio</span>
+                                    <span style="color: var(--turquesa); font-weight: 600;">Gratis</span>
+                                </div>
+                                <hr />
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="fw-bold">Total</span>
+                                    <span class="fw-bold" style="font-size: 1.2rem; color: var(--turquesa-dark);">S/ @total.ToString("F2")</span>
+                                </div>
+                                <form method="post" asp-controller="Pedido" asp-action="RealizarPedido">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-submit w-100">
+                                        <i class="fas fa-check-circle me-1"></i> Realizar Pedido
+                                    </button>
+                                </form>
+                                <a asp-controller="Producto" asp-action="Index" class="btn btn-limpiar w-100 mt-2">
+                                    <i class="fas fa-plus me-1"></i> Seguir comprando
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div id="carritoLocalVacio" class="text-center py-5">
+                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Tu carrito esta vacio</h5>
+                <a asp-controller="Producto" asp-action="Index" class="btn btn-buscar mt-3">
+                    <i class="fas fa-box-open me-1"></i> Ver Productos
+                </a>
+            </div>
+
+            <div id="carritoLocalContent" style="display:none;">
+                <div class="row g-4">
+                    <div class="col-lg-8" id="carritoLocalItems"></div>
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                            <div class="card-body p-4">
+                                <h6 class="fw-bold mb-3">Resumen del pedido</h6>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted" id="localCount">Productos (0)</span>
+                                    <span id="localSubtotal">S/ 0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Envio</span>
+                                    <span style="color: var(--turquesa); font-weight: 600;">Gratis</span>
+                                </div>
+                                <hr />
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="fw-bold">Total</span>
+                                    <span class="fw-bold" style="font-size: 1.2rem; color: var(--turquesa-dark);" id="localTotal">S/ 0.00</span>
+                                </div>
+                                <button class="btn btn-submit w-100" onclick="abrirLogin()">
+                                    <i class="fas fa-sign-in-alt me-1"></i> Iniciar sesion para comprar
+                                </button>
+                                <a asp-controller="Producto" asp-action="Index" class="btn btn-limpiar w-100 mt-2">
+                                    <i class="fas fa-plus me-1"></i> Seguir comprando
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        var estaLogueado = @(estaLogueado ? "true" : "false");
+        if (!estaLogueado) { renderCarritoLocal(); }
+    </script>
+}

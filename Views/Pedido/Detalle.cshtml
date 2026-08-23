@@ -1,0 +1,52 @@
+@model List<MichiMarket.Models.PedidoDetalle>
+@{
+    ViewData["Title"] = "Detalle del Pedido";
+    var total = Model.Sum(x => x.subtotal);
+}
+
+<section class="py-5">
+    <div class="container">
+        <a asp-controller="Pedido" asp-action="Index" class="btn btn-limpiar mb-4">
+            <i class="fas fa-arrow-left me-1"></i> Volver a mis pedidos
+        </a>
+
+        <h4 class="fw-bold mb-4"><i class="fas fa-file-invoice me-2"></i>Detalle del Pedido</h4>
+
+        @if (Model.Count == 0)
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No se encontro el detalle</h5>
+            </div>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <div class="carrito-item mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="carrito-img-wrapper">
+                            <img src="@Url.Content("~/" + item.foto_producto)" alt="@item.nombre" class="carrito-img" onerror="this.src='/img/gato_cara.png'" />
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-1">@item.nombre</h6>
+                            <p class="text-muted small mb-0">S/ @item.precio_unit.ToString("F2") c/u</p>
+                        </div>
+                        <div class="text-center" style="min-width: 80px;">
+                            <span class="fw-bold">x@(item.cantidad)</span>
+                        </div>
+                        <div class="text-end" style="min-width: 90px;">
+                            <p class="fw-bold mb-0" style="color: var(--turquesa-dark);">S/ @item.subtotal.ToString("F2")</p>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="text-end mt-3">
+                <div class="carrito-total" style="display: inline-block;">
+                    Total: S/ @total.ToString("F2")
+                </div>
+            </div>
+        }
+    </div>
+</section>

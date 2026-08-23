@@ -1,50 +1,119 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - MichiMarket</title>
-    <script type="importmap"></script>
+    <link rel="icon" type="image/png" href="~/img/gato_cara_blanco.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/MichiMarket.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/estilos.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MichiMarket</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+    <header class="cabecera">
+        <a class="navbar-brand-custom" asp-controller="Home" asp-action="Index" onclick="playMeow(event)">
+            <img src="~/img/gato_cara.png" alt="MichiMarket" class="navbar-logo" /> MichiMarket
+        </a>
+        <audio id="meowSound" src="~/mp3/cat_meow.mp3" preload="auto"></audio>
+        <div class="nav-links">
+            <a class="nav-link-btn" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-home"></i> Inicio
+            </a>
+            <a class="nav-link-btn" asp-controller="Producto" asp-action="Index">
+                <i class="fas fa-box-open"></i> Productos
+            </a>
+            <a class="nav-link-btn" asp-controller="Carrito" asp-action="Index">
+                <i class="fas fa-shopping-cart"></i> Carrito
+            </a>
+            @if (Context.Session.GetString("nombres") != null)
+            {
+                <div class="dropdown">
+                    <button class="nav-link-btn dropdown-toggle dropdown-user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        @{
+                            var foto = Context.Session.GetString("foto_perfil");
+                        }
+                        @if (!string.IsNullOrEmpty(foto))
+                        {
+                            <img src="~/@foto" alt="avatar" class="navbar-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline'" />
+                            <i class="fas fa-user" style="display:none"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-user"></i>
+                        }
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><span class="dropdown-item-text fw-bold"><i class="fas fa-user-circle me-1"></i> @Context.Session.GetString("nombres")</span></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" asp-controller="Account" asp-action="Perfil"><i class="fas fa-id-card me-1"></i> Mi Perfil</a></li>
+                        <li><a class="dropdown-item" asp-controller="Pedido" asp-action="Index"><i class="fas fa-clipboard-list me-1"></i> Mis Pedidos</a></li>
+                        @if (Context.Session.GetString("rol") == "admin")
+                        {
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><span class="dropdown-item-text fw-bold small text-muted"><i class="fas fa-user-shield me-1"></i> Admin</span></li>
+                            <li><a class="dropdown-item" asp-controller="Admin" asp-action="Productos"><i class="fas fa-box-open me-1"></i> Gestionar Productos</a></li>
+                            <li><a class="dropdown-item" asp-controller="Admin" asp-action="Pedidos"><i class="fas fa-truck me-1"></i> Gestionar Pedidos</a></li>
+                            <li><a class="dropdown-item" asp-controller="Admin" asp-action="Usuarios"><i class="fas fa-users me-1"></i> Ver Usuarios</a></li>
+                        }
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout"><i class="fas fa-sign-out-alt me-1"></i> Salir</a></li>
                     </ul>
                 </div>
-            </div>
-        </nav>
+            }
+            else
+            {
+                <a class="nav-link-btn" onclick="abrirLogin()">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+            }
+        </div>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <div class="main-content">
+        @if (TempData["Exito"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+                <i class="fas fa-check-circle me-1"></i> @TempData["Exito"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
+                <i class="fas fa-exclamation-circle me-1"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @RenderBody()
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - MichiMarket - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <div id="antiforgery-token-container" style="display:none">@Html.AntiForgeryToken()</div>
+
+    @if (Context.Session.GetString("nombres") == null)
+    {
+        <partial name="_LoginModal" />
+    }
+
+    <footer class="footer">
+        <div class="contactos">
+            <div class="contacto-item">
+                <i class="fas fa-phone icono"></i>
+                <p>Telefono: 999 888 777</p>
+            </div>
+            <div class="contacto-item">
+                <i class="fas fa-envelope icono"></i>
+                <p>Correo: michimarket@gmail.com</p>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/scripts.js" asp-append-version="true"></script>
+    @if (Context.Session.GetString("nombres") != null)
+    {
+        <script>fusionarCarritoLocal();</script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,0 +1,84 @@
+﻿@model MichiMarket.Models.Usuario
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-user-circle" style="font-size: 2rem; color: var(--turquesa);"></i>
+                            <h4 class="fw-bold mt-2">Mi Perfil</h4>
+                        </div>
+
+                        @if (ViewBag.Exito != null)
+                        {
+                            <div class="alert alert-success text-center py-2" style="font-size: 13px;">
+                                <i class="fas fa-check-circle me-1"></i> @ViewBag.Exito
+                            </div>
+                        }
+                        @if (ViewBag.Error != null)
+                        {
+                            <div class="alert alert-danger text-center py-2" style="font-size: 13px;">
+                                <i class="fas fa-exclamation-circle me-1"></i> @ViewBag.Error
+                            </div>
+                        }
+
+                        <form method="post" asp-controller="Account" asp-action="Perfil" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="text-center mb-3">
+                                        <div class="img-preview-box img-preview-avatar" id="previewBox">
+                                            @if (!string.IsNullOrEmpty(Model.foto_perfil))
+                                            {
+                                                <img id="imgPreview" src="~/@Model.foto_perfil" alt="Foto de perfil"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" />
+                                                <i class="fas fa-user img-preview-icon" style="display:none"></i>
+                                            }
+                                            else
+                                            {
+                                                <img id="imgPreview" style="display:none" />
+                                                <i class="fas fa-user img-preview-icon"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                    <label class="form-label fw-bold">Foto de perfil</label>
+                                    <input type="file" name="foto_perfil" id="inputFoto" class="form-control" accept="image/*" onchange="previewImage(event)" />
+                                    <small class="text-muted">JPG, PNG o WebP</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Nombres</label>
+                                    <input type="text" name="nombres" class="form-control" value="@Model.nombres" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Apellidos</label>
+                                    <input type="text" name="apellidos" class="form-control" value="@Model.apellidos" required />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Correo</label>
+                                    <input type="email" name="correo" class="form-control" value="@Model.correo" required />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Nueva contrasena</label>
+                                    <input type="password" name="password" class="form-control" placeholder="Dejar vacio para no cambiar" />
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-submit w-100">
+                                        <i class="fas fa-save me-1"></i> Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+}

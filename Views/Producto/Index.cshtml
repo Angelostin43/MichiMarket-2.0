@@ -1,0 +1,202 @@
+@model List<MichiMarket.Models.Producto>
+@{
+    ViewData["Title"] = "Productos";
+    var estaLogueado = Context.Session.GetString("nombres") != null;
+    var esAdmin = ViewBag.EsAdmin as bool? ?? false;
+    var paginaActual = ViewBag.PaginaActual as int? ?? 1;
+    var totalPaginas = ViewBag.TotalPaginas as int? ?? 1;
+    var filtroNombre = ViewBag.FiltroNombre as string ?? "";
+    var filtroTipo = ViewBag.FiltroTipo as string ?? "";
+    var filtroAnimal = ViewBag.FiltroAnimal as string ?? "";
+    var filtroPrecioMin = ViewBag.FiltroPrecioMin as decimal?;
+    var filtroPrecioMax = ViewBag.FiltroPrecioMax as decimal?;
+    var esBusqueda = ViewBag.EsBusqueda as bool? ?? false;
+    var totalProductos = esBusqueda ? Model.Count : 30;
+}
+
+<section class="py-5">
+    <div class="container">
+
+        <!-- Barra de busqueda -->
+        <form method="post" asp-controller="Producto" asp-action="Buscar" id="formBusqueda">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="pagina" id="paginaField" value="1" />
+            <div class="search-box mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold">Buscar producto</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                            <input type="text" name="nombre" class="form-control border-start-0 ps-0" placeholder="Nombre del producto..." id="busquedaGeneral" value="@filtroNombre" />
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-buscar flex-grow-1">
+                            <i class="fas fa-search me-1"></i> Buscar
+                        </button>
+                        <button type="button" class="btn btn-avanzado @(esBusqueda ? "active" : "")" onclick="toggleAvanzado()" id="btnAvanzado">
+                            <i class="fas fa-sliders-h"></i> Avanzado
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Busqueda avanzada -->
+                <div class="busqueda-avanzada @(esBusqueda ? "active" : "")" id="busquedaAvanzada">
+                    <hr class="my-3" />
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Tipo</label>
+                            <select name="tipo" class="form-select" id="filtroTipo">
+                                <option value="">Todos</option>
+                                <option value="alimento" selected="@(filtroTipo == "alimento")">Alimento</option>
+                                <option value="higiene" selected="@(filtroTipo == "higiene")">Higiene</option>
+                                <option value="salud" selected="@(filtroTipo == "salud")">Salud</option>
+                                <option value="accesorio" selected="@(filtroTipo == "accesorio")">Accesorios</option>
+                                <option value="juguetes" selected="@(filtroTipo == "juguetes")">Juguetes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Animal</label>
+                            <select name="animal" class="form-select" id="filtroAnimal">
+                                <option value="">Todos</option>
+                                <option value="gato" selected="@(filtroAnimal == "gato")">Gato</option>
+                                <option value="perro" selected="@(filtroAnimal == "perro")">Perro</option>
+                                <option value="cuy" selected="@(filtroAnimal == "cuy")">Cuy</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold">Precio min</label>
+                            <input type="number" name="precioMin" class="form-control" placeholder="S/ 0" id="filtroPrecioMin" min="0" value="@filtroPrecioMin" />
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold">Precio max</label>
+                            <input type="number" name="precioMax" class="form-control" placeholder="S/ 999" id="filtroPrecioMax" min="0" value="@filtroPrecioMax" />
+                        </div>
+                    </div>
+                    <div class="text-end mt-3">
+                        <a asp-controller="Producto" asp-action="Index" class="btn btn-limpiar btn-sm">
+                            <i class="fas fa-times me-1"></i> Limpiar filtros
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Resultados -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <p class="text-muted mb-0">Pagina @paginaActual de @totalPaginas</p>
+            @if (esAdmin)
+            {
+                <div class="d-flex gap-2 align-items-center">
+                    <div id="batchDeleteSection" class="d-none">
+                        <span class="text-muted small me-2"><span id="selectedCount">0</span> seleccionados</span>
+                        <button type="button" class="btn btn-sm btn-admin-delete" onclick="confirmarEliminarVarios()">
+                            <i class="fas fa-trash-alt me-1"></i> Eliminar
+                        </button>
+                    </div>
+                    <label class="btn btn-sm btn-outline-secondary mb-0" title="Seleccionar todo">
+                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" /> Todos
+                    </label>
+                    <a asp-controller="Admin" asp-action="CrearProducto" class="btn btn-submit btn-sm">
+                        <i class="fas fa-plus me-1"></i> Crear Producto
+                    </a>
+                </div>
+            }
+        </div>
+
+        <!-- Grid de productos -->
+        <div class="row g-4">
+            @foreach (var p in Model)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card product-card h-100 border-0 shadow-sm">
+                        <div class="product-img-wrapper">
+                            <img src="~/@p.foto_producto" class="card-img-top" alt="@p.nombre" onerror="this.src='/img/gato_cara.png'" />
+                            <span class="product-badge">@char.ToUpper(p.tipo[0])@p.tipo.Substring(1)</span>
+                            <button class="btn-cart-bookmark" onclick="toggleCartPopup(event, @p.id_producto)" id="btn-@p.id_producto"
+                                    data-nombre="@p.nombre" data-precio="@p.precio" data-tipo="@p.tipo" data-animal="@p.animal" data-foto="@p.foto_producto">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                            <div class="cart-popup" id="popup-@p.id_producto">
+                                <label class="fw-bold small">Cantidad</label>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="number" class="form-control form-control-sm" value="1" min="1" max="99" id="qty-@p.id_producto" style="width:60px;" />
+                                    <button class="btn btn-sm btn-buscar" onclick="agregarAlCarrito(@p.id_producto)">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title fw-bold mb-1">@p.nombre</h6>
+                            <p class="text-muted small mb-2">@char.ToUpper(p.animal[0])@p.animal.Substring(1)</p>
+                            <p class="product-price mt-auto mb-2">S/ @p.precio.ToString("F2")</p>
+                            <a asp-controller="Producto" asp-action="Detalle" asp-route-id="@p.id_producto" class="btn btn-add-cart w-100">
+                                <i class="fas fa-eye me-1"></i> Ver detalle
+                            </a>
+                            @if (esAdmin)
+                            {
+                                <div class="d-flex gap-2 mt-2 align-items-center">
+                                    <input type="checkbox" class="product-checkbox" value="@p.id_producto" onchange="updateBatchUI()" title="Seleccionar" />
+                                    <a asp-controller="Admin" asp-action="EditarProducto" asp-route-id="@p.id_producto" class="btn btn-admin-edit flex-grow-1">
+                                        <i class="fas fa-edit me-1"></i> Editar
+                                    </a>
+                                    <form method="post" asp-controller="Admin" asp-action="EliminarProducto" class="d-inline flex-grow-1 delete-form">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@p.id_producto" />
+                                        <button type="submit" class="btn btn-admin-delete w-100">
+                                            <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model.Count == 0)
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No se encontraron productos</h5>
+                <a asp-controller="Producto" asp-action="Index" class="btn btn-buscar mt-3">Ver todos</a>
+            </div>
+        }
+
+        <!-- Paginacion -->
+        @if (totalPaginas > 1)
+        {
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(paginaActual == 1 ? "disabled" : "")">
+                        <button type="button" class="page-link" onclick="irAPagina(@(paginaActual - 1))">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                    </li>
+                    @for (int i = 1; i <= totalPaginas; i++)
+                    {
+                        <li class="page-item @(i == paginaActual ? "active" : "")">
+                            <button type="button" class="page-link" onclick="irAPagina(@i)">@i</button>
+                        </li>
+                    }
+                    <li class="page-item @(paginaActual == totalPaginas ? "disabled" : "")">
+                        <button type="button" class="page-link" onclick="irAPagina(@(paginaActual + 1))">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        var estaLogueado = @(estaLogueado ? "true" : "false");
+        var esBusqueda = @(esBusqueda ? "true" : "false");
+        var esAdmin = @(esAdmin ? "true" : "false");
+        marcarBotonesActivos();
+    </script>
+}

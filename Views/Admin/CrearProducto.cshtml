@@ -1,0 +1,90 @@
+@model MichiMarket.Models.Producto
+@{
+    ViewData["Title"] = "Crear Producto";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <a asp-controller="Admin" asp-action="Productos" class="btn btn-limpiar mb-4">
+                    <i class="fas fa-arrow-left me-1"></i> Volver
+                </a>
+
+                <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-plus-circle" style="font-size: 2rem; color: var(--turquesa);"></i>
+                            <h4 class="fw-bold mt-2">Crear Producto</h4>
+                        </div>
+
+                        @if (ViewBag.Error != null)
+                        {
+                            <div class="alert alert-danger text-center py-2" style="font-size: 13px;">
+                                <i class="fas fa-exclamation-circle me-1"></i> @ViewBag.Error
+                            </div>
+                        }
+
+                        <form method="post" asp-controller="Admin" asp-action="CrearProducto" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="text-center mb-3">
+                                        <div class="img-preview-box" id="previewBox">
+                                            <img id="imgPreview" src="~/img/gato_cara.png" alt="Preview" />
+                                        </div>
+                                    </div>
+                                    <label class="form-label fw-bold">Foto del producto</label>
+                                    <input type="file" name="foto" id="inputFoto" class="form-control" accept="image/*" onchange="previewImage(event)" />
+                                    <small class="text-muted">JPG, PNG o WebP. Maximo 5MB.</small>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Nombre</label>
+                                    <input type="text" name="nombre" class="form-control" placeholder="Nombre del producto" required />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Descripcion</label>
+                                    <input type="text" name="descripcion" class="form-control" placeholder="Descripcion corta" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Precio (S/)</label>
+                                    <input type="number" name="precio" class="form-control" step="0.01" min="0" placeholder="0.00" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Stock</label>
+                                    <input type="number" name="stock" class="form-control" min="0" placeholder="0" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Tipo</label>
+                                    <select name="tipo" class="form-select" required>
+                                        <option value="alimento">Alimento</option>
+                                        <option value="higiene">Higiene</option>
+                                        <option value="salud">Salud</option>
+                                        <option value="accesorio">Accesorios</option>
+                                        <option value="juguetes">Juguetes</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Animal</label>
+                                    <select name="animal" class="form-select" required>
+                                        <option value="gato">Gato</option>
+                                        <option value="perro">Perro</option>
+                                        <option value="cuy">Cuy</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-submit w-100">
+                                        <i class="fas fa-save me-1"></i> Guardar Producto
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+}

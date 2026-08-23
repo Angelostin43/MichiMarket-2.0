@@ -1,8 +1,294 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model List<MichiMarket.Models.Producto>
+@{
+    ViewData["Title"] = "Inicio";
+    var estaLogueado = Context.Session.GetString("nombres") != null;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="home-hero text-center text-white pb-0">
+    <div class="container py-4">
+        <div class="d-flex align-items-center justify-content-center gap-3 mb-2">
+            <img src="~/img/gato_cara.png" alt="MichiMarket" class="hero-logo" />
+            <h1 class="display-5 fw-bold mb-0">MichiMarket</h1>
+        </div>
+        <p class="lead mb-2">Todo lo que tu mascota necesita, en un solo lugar.</p>
+        <p class="small opacity-75 mb-3">Alimentos, accesorios, salud e higiene para gatos, perros y cuyes. Envio a todo el pais con los mejores precios del mercado.</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a asp-controller="Producto" asp-action="Index" class="btn btn-hero btn-lg px-5">
+                <i class="fas fa-box-open me-2"></i> Ver Productos
+            </a>
+            @if (!estaLogueado)
+            {
+                <button class="btn btn-outline-light btn-lg px-4" onclick="abrirLogin()">
+                    <i class="fas fa-user-plus me-2"></i> Crear cuenta
+                </button>
+            }
+        </div>
+    </div>
+    <div class="hero-wave">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <path d="M0,64 C200,120 400,0 720,64 C1040,128 1240,0 1440,64 L1440,120 L0,120 Z" fill="#f0fdfa"/>
+        </svg>
+    </div>
+</section>
+
+<section class="py-3">
+    <div class="container">
+        <div class="row g-3 justify-content-center">
+            <div class="col-md-3 col-6">
+                <div class="benefit-card text-center py-3 px-2">
+                    <i class="fas fa-truck-fast benefit-icon mb-2"></i>
+                    <h6 class="fw-bold mb-1">Envio rapido</h6>
+                    <small class="text-muted">Tu pedido a la puerta</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="benefit-card text-center py-3 px-2">
+                    <i class="fas fa-shield-halved benefit-icon mb-2"></i>
+                    <h6 class="fw-bold mb-1">Compra segura</h6>
+                    <small class="text-muted">Pago 100% protegido</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="benefit-card text-center py-3 px-2">
+                    <i class="fas fa-tags benefit-icon mb-2"></i>
+                    <h6 class="fw-bold mb-1">Mejores precios</h6>
+                    <small class="text-muted">Ofertas todos los dias</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="benefit-card text-center py-3 px-2">
+                    <i class="fas fa-headset benefit-icon mb-2"></i>
+                    <h6 class="fw-bold mb-1">Atencion 24/7</h6>
+                    <small class="text-muted">Siempre estamos para ti</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-3">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-md-7">
+                <h2 class="fw-bold section-title mb-2">Sobre MichiMarket</h2>
+                <p class="text-muted mb-2">
+                    Somos una tienda online especializada en productos para mascotas. Trabajamos con las mejores marcas para ofrecerte
+                    alimentos, accesorios, juguetes y productos de salud e higiene para gatos, perros y cuyes.
+                </p>
+                <p class="text-muted mb-2">
+                    Nuestra mision es que cada mascota reciba lo mejor sin que tu bolsillo sufra. Con precios justos, envio a todo el pais
+                    y un equipo que ama a los animales tanto como tu, MichiMarket es el lugar indicado para consentir a tu peludo favorito.
+                </p>
+                <a asp-controller="Producto" asp-action="Index" class="btn btn-submit">
+                    <i class="fas fa-paw me-1"></i> Explorar productos
+                </a>
+            </div>
+            <div class="col-md-5 text-center">
+                <div class="about-illustration">
+                    <i class="fas fa-cat about-icon-lg me-3"></i>
+                    <i class="fas fa-dog about-icon-lg"></i>
+                </div>
+                <p class="text-muted small mt-3 mb-0">+30 productos disponibles para consentir a tu mascota</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-3">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-md-5 text-center">
+                <div class="about-illustration">
+                    <i class="fas fa-shield-cat about-icon-lg me-3"></i>
+                    <i class="fas fa-heart about-icon-lg"></i>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <h2 class="fw-bold section-title mb-2">Cuidamos a tu mascota como tu</h2>
+                <p class="text-muted mb-2">
+                    En MichiMarket nos aseguramos de que cada producto que vendemos cumpla con los mas altos estandares de calidad.
+                    Trabajamos directamente con marcas reconocidas para garantizar la seguridad y el bienestar de tu peludo favorito.
+                </p>
+                <p class="text-muted mb-2">
+                    Ya sea que tengas un gato travieso, un perro fiel o un cuy mimado, aqui encontraras todo lo que necesitas
+                    para que este siempre saludable, feliz y bien cuidado.
+                </p>
+                <a asp-controller="Producto" asp-action="Index" class="btn btn-submit">
+                    <i class="fas fa-paw me-1"></i> Ver productos
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-3">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-2 section-title">Nuestras Categorias</h2>
+        <p class="text-center text-muted mb-3">Encuentra todo lo que tu mascota necesita organizado por categoria.</p>
+        <div class="row g-3 justify-content-center">
+            <div class="col-md-4 col-sm-6">
+                <a asp-controller="Producto" asp-action="Index" asp-route-tipo="Alimento" class="text-decoration-none">
+                    <div class="card category-card h-100 text-center border-0 shadow-sm">
+                        <div class="card-body py-3">
+                            <i class="fas fa-bone category-icon mb-2"></i>
+                            <h5 class="card-title fw-bold">Alimento</h5>
+                            <p class="card-text text-muted small mb-0">Comida balanceada y premios.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <a asp-controller="Producto" asp-action="Index" asp-route-tipo="Higiene" class="text-decoration-none">
+                    <div class="card category-card h-100 text-center border-0 shadow-sm">
+                        <div class="card-body py-3">
+                            <i class="fas fa-pump-soap category-icon mb-2"></i>
+                            <h5 class="card-title fw-bold">Higiene</h5>
+                            <p class="card-text text-muted small mb-0">Shampoo, cepillos y limpieza.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <a asp-controller="Producto" asp-action="Index" asp-route-tipo="Salud" class="text-decoration-none">
+                    <div class="card category-card h-100 text-center border-0 shadow-sm">
+                        <div class="card-body py-3">
+                            <i class="fas fa-shield-cat category-icon mb-2"></i>
+                            <h5 class="card-title fw-bold">Salud</h5>
+                            <p class="card-text text-muted small mb-0">Vacunas, vitaminas y cuidados.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <a asp-controller="Producto" asp-action="Index" asp-route-tipo="Accesorios" class="text-decoration-none">
+                    <div class="card category-card h-100 text-center border-0 shadow-sm">
+                        <div class="card-body py-3">
+                            <i class="fas fa-shirt category-icon mb-2"></i>
+                            <h5 class="card-title fw-bold">Accesorios</h5>
+                            <p class="card-text text-muted small mb-0">Collares, camas y ropa.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <a asp-controller="Producto" asp-action="Index" asp-route-tipo="Juguetes" class="text-decoration-none">
+                    <div class="card category-card h-100 text-center border-0 shadow-sm">
+                        <div class="card-body py-3">
+                            <i class="fas fa-futbol category-icon mb-2"></i>
+                            <h5 class="card-title fw-bold">Juguetes</h5>
+                            <p class="card-text text-muted small mb-0">Diversion para tu peludo.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-3 bg-light">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-2 section-title">Para cada mascota</h2>
+        <p class="text-center text-muted mb-3">Especiales en gatos, perros y cuyes. Filtra por animal y encuentra lo que buscas.</p>
+        <div class="row g-3 justify-content-center">
+            <div class="col-md-4">
+                <a asp-controller="Producto" asp-action="Index" asp-route-animal="Gato" class="text-decoration-none">
+                    <div class="card animal-card h-100 border-0 shadow-sm text-center">
+                        <div class="card-body py-3">
+                            <i class="fas fa-cat animal-icon mb-2"></i>
+                            <h5 class="fw-bold mb-1">Gato</h5>
+                            <small class="text-muted">Todo para tu felino</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a asp-controller="Producto" asp-action="Index" asp-route-animal="Perro" class="text-decoration-none">
+                    <div class="card animal-card h-100 border-0 shadow-sm text-center">
+                        <div class="card-body py-3">
+                            <i class="fas fa-dog animal-icon mb-2"></i>
+                            <h5 class="fw-bold mb-1">Perro</h5>
+                            <small class="text-muted">Lo mejor para tu fiel amigo</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a asp-controller="Producto" asp-action="Index" asp-route-animal="Cuy" class="text-decoration-none">
+                    <div class="card animal-card h-100 border-0 shadow-sm text-center">
+                        <div class="card-body py-3">
+                            <i class="fas fa-heart animal-icon mb-2"></i>
+                            <h5 class="fw-bold mb-1">Cuy</h5>
+                            <small class="text-muted">Cuidado especial para tu cuy</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (Model.Count > 0)
+{
+    <section class="py-3">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="fw-bold mb-0 section-title">Lo mas destacado</h2>
+                <a asp-controller="Producto" asp-action="Index" class="btn btn-sm btn-submit">
+                    <i class="fas fa-arrow-right me-1"></i> Ver todo
+                </a>
+            </div>
+            <div class="row g-3">
+                @foreach (var p in Model)
+                {
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card product-card h-100 border-0 shadow-sm">
+                            <div class="product-img-wrapper">
+                                <img src="~/@p.foto_producto" class="card-img-top" alt="@p.nombre" onerror="this.src='/img/gato_cara.png'" />
+                                <span class="product-badge">@char.ToUpper(p.tipo[0])@p.tipo.Substring(1)</span>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title fw-bold mb-1">@p.nombre</h6>
+                                <p class="text-muted small mb-2">@char.ToUpper(p.animal[0])@p.animal.Substring(1)</p>
+                                <p class="product-price mt-auto mb-2">S/ @p.precio.ToString("F2")</p>
+                                <a asp-controller="Producto" asp-action="Detalle" asp-route-id="@p.id_producto" class="btn btn-add-cart w-100">
+                                    <i class="fas fa-eye me-1"></i> Ver detalle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<section class="home-cta text-center py-3">
+    <div class="cta-wave-top">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <path d="M0,64 C200,0 400,120 720,64 C1040,8 1240,120 1440,64 L1440,0 L0,0 Z" fill="#f0fdfa"/>
+        </svg>
+    </div>
+    <div class="container">
+        @if (estaLogueado)
+        {
+            <h2 class="fw-bold mb-2 section-title">Bienvenido de vuelta, @Context.Session.GetString("nombres")!</h2>
+            <p class="text-muted mb-3">Revisa tu carrito o explora nuestros productos.</p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a asp-controller="Carrito" asp-action="Index" class="btn btn-submit btn-lg px-5">
+                    <i class="fas fa-shopping-cart me-2"></i> Ir al Carrito
+                </a>
+                <a asp-controller="Producto" asp-action="Index" class="btn btn-outline btn-lg px-5">
+                    <i class="fas fa-box-open me-2"></i> Ver Productos
+                </a>
+            </div>
+        }
+        else
+        {
+            <h2 class="fw-bold mb-2 section-title">Ya tienes una cuenta?</h2>
+            <p class="text-muted mb-3">Inicia sesion para acceder a tu carrito y hacer pedidos.</p>
+            <button class="btn btn-submit btn-lg px-5" onclick="abrirLogin()">
+                <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesion
+            </button>
+        }
+    </div>
+</section>

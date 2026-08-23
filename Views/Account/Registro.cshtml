@@ -1,0 +1,64 @@
+@model MichiMarket.Models.Usuario
+@{
+    ViewData["Title"] = "Registro";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-paw" style="font-size: 2rem; color: var(--turquesa);"></i>
+                            <h4 class="fw-bold mt-2">Crear Cuenta</h4>
+                            <p class="text-muted small">Registrate para empezar a comprar</p>
+                        </div>
+                        <form method="post" asp-controller="Account" asp-action="Registro" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="text-center mb-2">
+                                        <div class="img-preview-box img-preview-avatar" id="previewBox">
+                                            <img id="imgPreview" style="display:none" />
+                                            <i class="fas fa-user img-preview-icon"></i>
+                                        </div>
+                                    </div>
+                                    <label class="form-label fw-bold">Foto de perfil (opcional)</label>
+                                    <input type="file" name="foto_perfil" class="form-control" accept="image/*" onchange="previewImage(event)" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Nombres</label>
+                                    <input type="text" name="nombres" class="form-control" placeholder="Juan" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Apellidos</label>
+                                    <input type="text" name="apellidos" class="form-control" placeholder="Perez" required />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Correo</label>
+                                    <input type="email" name="correo" class="form-control" placeholder="juan@correo.com" required />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Contrasena</label>
+                                    <input type="password" name="password" class="form-control" placeholder="********" required />
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-submit w-100">
+                                        <i class="fas fa-user-plus me-1"></i> Registrarme
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <p class="text-center mt-3 small text-muted">
+                            Ya tienes cuenta? <a asp-controller="Account" asp-action="Login" style="color: var(--turquesa-dark); font-weight: 600;">Inicia sesion</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+}

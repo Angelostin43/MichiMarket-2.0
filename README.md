@@ -57,4 +57,4 @@ Código fuente: [MichiMarket-2.0 en GitHub](https://github.com/Angelostin43/Mich
 
 ## 👨‍💻 Autor
 
-Desarrollado por **Angelo** como proyecto personal y de portafolio.
+Desarrollado por **Angelo** como proyecto de curso y de portafolio.

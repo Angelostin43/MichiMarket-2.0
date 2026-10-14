@@ -1,4 +1,4 @@
-# 🐾 MichiMarket
+# 🐾 MichiMarket 2.0
 
 **MichiMarket** es una aplicación web orientada a la venta y gestión de productos para mascotas. El proyecto contempla productos para **gatos, perros y cuyes**, con una experiencia pensada para organizar el catálogo y facilitar la administración de una tienda para mascotas.
 
